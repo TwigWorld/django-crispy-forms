@@ -1,12 +1,24 @@
-===================
-django-crispy-forms
-===================
+=======================
+django-crispy-forms-ng
+=======================
 
-.. image:: https://travis-ci.org/maraujop/django-crispy-forms.png?branch=master
+.. image:: https://travis-ci.org/uranusjr/django-crispy-forms-ng.svg?branch=ng
    :alt: Build Status
-   :target: https://travis-ci.org/maraujop/django-crispy-forms
+   :target: https://travis-ci.org/uranusjr/django-crispy-forms-ng
 
-The best way to have Django_ DRY forms. Build programmatic reusable layouts out of components, having full control of the rendered HTML without writing HTML in templates. All this without breaking the standard way of doing things in Django, so it plays nice with any other form application.
+django-crispy-forms-ng is a fork of `django-crispy-forms`_. The original project, lead by `Miguel Araujo`_, stopped receiving update during early 2014. The problem grew with each Django upgrade, and more and more functionalities relied by it became deprecated.
+
+This fork aims to provide support to modern Django versions, while maintain reasonable support for older versions. The plan is to support all officially supported major Django versions, and all versions between the oldest LTS version to the current version. For example, as of April 2015, the latest Django version is 1.8, while the oldest LTS version is 1.4, so the supported Django versions are 1.4–1.8.
+
+The original django-crispy-forms README follows.
+
+
+.. _`django-crispy-forms`: https://github.com/maraujop/django-crispy-forms
+
+------
+
+
+The best way to have Django_ DRY forms. Build programmatically reusable layouts out of components, having full control of the rendered HTML without writing HTML in templates. All this without breaking the standard way of doing things in Django, so it plays nice with any other form application.
 
 The application mainly provides:
 
