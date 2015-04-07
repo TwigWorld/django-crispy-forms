@@ -7,11 +7,11 @@ from django.conf import settings
 from django.forms.forms import BoundField
 from django.template import Context
 from django.template.loader import get_template
+from django.utils import six
 from django.utils.html import conditional_escape
 from django.utils.functional import memoize
 
 from .base import KeepContext
-from .compatibility import text_type, PY2
 
 # Global field template, default template used for rendering a field.
 
@@ -60,15 +60,15 @@ def render_field(
             )
         else:
             # In Python 2 form field names cannot contain unicode characters without ASCII mapping
-            if PY2:
+            if not six.PY3:
                 # This allows fields to be unicode strings, always they don't use non ASCII
                 try:
-                    if isinstance(field, text_type):
+                    if isinstance(field, six.text_type):
                         field = field.encode('ascii').decode()
                     # If `field` is not unicode then we turn it into a unicode string, otherwise doing
                     # str(field) would give no error and the field would not be resolved, causing confusion
                     else:
-                        field = text_type(field)
+                        field = six.text_type(field)
 
                 except (UnicodeEncodeError, UnicodeDecodeError):
                     raise Exception("Field '%s' is using forbidden unicode characters" % field)

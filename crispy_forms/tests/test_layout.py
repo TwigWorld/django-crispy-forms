@@ -12,6 +12,7 @@ from django.template import (
     Context, RequestContext, loader
 )
 from django.test import RequestFactory
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from .base import CrispyTestCase
@@ -21,7 +22,6 @@ from .forms import (
 )
 from .utils import override_settings
 from crispy_forms.bootstrap import InlineCheckboxes
-from crispy_forms.compatibility import PY2
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout, Fieldset, MultiField, Row, Column, HTML, ButtonHolder,
@@ -60,11 +60,11 @@ class TestFormLayout(CrispyTestCase):
             helper = FormHelper()
             helper.layout = Layout(u'contraseña')
 
-        if PY2:
-            self.assertRaises(Exception, lambda: render_crispy_form(UnicodeForm()))
-        else:
+        if six.PY3:
             html = render_crispy_form(UnicodeForm())
             self.assertTrue('id="id_contraseña"' in html)
+        else:
+            self.assertRaises(Exception, lambda: render_crispy_form(UnicodeForm()))
 
     def test_meta_extra_fields_with_missing_fields(self):
         class FormWithMeta(TestForm):

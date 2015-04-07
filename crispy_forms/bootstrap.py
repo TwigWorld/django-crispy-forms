@@ -3,8 +3,8 @@ from random import randint
 from django.template import Context, Template
 from django.template.loader import render_to_string
 from django.template.defaultfilters import slugify
+from django.utils import six
 
-from .compatibility import text_type
 from .layout import LayoutObject, Field, Div
 from .utils import render_field, flatatt, TEMPLATE_PACK
 
@@ -181,7 +181,7 @@ class StrictButton(object):
         self.flat_attrs = flatatt(kwargs)
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
-        self.content = Template(text_type(self.content)).render(context)
+        self.content = Template(six.text_type(self.content)).render(context)
         template = self.template % template_pack
         return render_to_string(template, {'button': self}, context)
 
@@ -329,7 +329,7 @@ class Accordion(ContainerHolder):
         # accordion group needs the parent div id to set `data-parent` (I don't
         # know why). This needs to be a unique id
         if not self.css_id:
-            self.css_id = "-".join(["accordion", text_type(randint(1000, 9999))])
+            self.css_id = "-".join(["accordion", six.text_type(randint(1000, 9999))])
 
         # Open the group that should be open.
         self.open_target_group_for_form(form)

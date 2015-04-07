@@ -10,6 +10,7 @@ from django.middleware.csrf import _get_new_csrf_key
 from django.template import (
     loader, TemplateSyntaxError, Context
 )
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from .base import CrispyTestCase
@@ -18,7 +19,6 @@ from crispy_forms.bootstrap import (
     FieldWithButtons, PrependedAppendedText, AppendedText, PrependedText,
     StrictButton
 )
-from crispy_forms.compatibility import text_type
 from crispy_forms.helper import FormHelper, FormHelpersException
 from crispy_forms.layout import (
     Layout, Submit, Reset, Hidden, Button, MultiField, Field
@@ -126,7 +126,7 @@ class TestFormHelper(CrispyTestCase):
 
         # Ensure those errors were rendered
         self.assertTrue('<li>Passwords dont match</li>' in html)
-        self.assertTrue(text_type(_('This field is required.')) in html)
+        self.assertTrue(six.text_type(_('This field is required.')) in html)
         self.assertTrue('error' in html)
 
         # Now we render without errors
@@ -136,7 +136,7 @@ class TestFormHelper(CrispyTestCase):
 
         # Ensure errors were not rendered
         self.assertFalse('<li>Passwords dont match</li>' in html)
-        self.assertFalse(text_type(_('This field is required.')) in html)
+        self.assertFalse(six.text_type(_('This field is required.')) in html)
         self.assertFalse('error' in html)
 
     def test_html5_required(self):

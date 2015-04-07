@@ -1,6 +1,6 @@
 import os
 
-from crispy_forms.compatibility import text_type
+from django.utils import six
 
 
 BASE_DIR = os.path.dirname(__file__)
@@ -34,7 +34,7 @@ SITE_ROOT = os.path.dirname(os.path.abspath(__file__))
 class InvalidVarException(object):
     def __mod__(self, missing):
         try:
-            missing_str = text_type(missing)
+            missing_str = six.text_type(missing)
         except:
             missing_str = 'Failed to create string representation'
         raise Exception('Unknown template variable %r %s' % (missing, missing_str))

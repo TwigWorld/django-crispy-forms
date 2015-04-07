@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import forms
+from django.utils import six
 
 from .base import CrispyTestCase
-from crispy_forms.compatibility import string_types
 from crispy_forms.exceptions import DynamicError
 from crispy_forms.helper import FormHelper, FormHelpersException
 from crispy_forms.layout import Submit
@@ -189,12 +189,12 @@ class TestDynamicLayouts(CrispyTestCase):
         )
         helper.layout = layout
 
-        helper.filter(string_types, greedy=True).wrap_once(Field)
+        helper.filter(six.string_types, greedy=True).wrap_once(Field)
         helper.filter(Field, greedy=True).update_attributes(readonly=True)
 
         self.assertTrue(isinstance(layout[0], Field))
         self.assertTrue(isinstance(layout[1][0], Field))
-        self.assertTrue(isinstance(layout[1][0][0], string_types))
+        self.assertTrue(isinstance(layout[1][0][0], six.string_types))
         self.assertTrue(isinstance(layout[2], Field))
         self.assertEqual(layout[1][0].attrs, {'readonly': True})
         self.assertEqual(layout[0].attrs, {'readonly': True})
@@ -237,7 +237,7 @@ class TestDynamicLayouts(CrispyTestCase):
             Div('password1'),
             'password2',
         )
-        self.assertEqual(layout_3.get_layout_objects(string_types, max_level=2), [
+        self.assertEqual(layout_3.get_layout_objects(six.string_types, max_level=2), [
             [[0], 'email'],
             [[1, 0], 'password1'],
             [[2], 'password2']
@@ -270,7 +270,7 @@ class TestDynamicLayouts(CrispyTestCase):
         )
         helper.layout = layout
 
-        helper.filter(string_types).wrap(Field, css_class="test-class")
+        helper.filter(six.string_types).wrap(Field, css_class="test-class")
         self.assertTrue(isinstance(layout.fields[0], Field))
         self.assertTrue(isinstance(layout.fields[1], Div))
         self.assertTrue(isinstance(layout.fields[2], Field))
@@ -411,8 +411,8 @@ class TestDynamicLayouts(CrispyTestCase):
         self.assertTrue(isinstance(form.helper.layout[1], Field))
         # Check others stay the same
         self.assertTrue(isinstance(form.helper.layout[0][3][1], HTML))
-        self.assertTrue(isinstance(form.helper.layout[0][1][0][0], string_types))
-        self.assertTrue(isinstance(form.helper.layout[0][4][0], string_types))
+        self.assertTrue(isinstance(form.helper.layout[0][1][0][0], six.string_types))
+        self.assertTrue(isinstance(form.helper.layout[0][4][0], six.string_types))
 
     def test_all_without_layout(self):
         form = TestForm()
@@ -485,8 +485,8 @@ class TestDynamicLayouts(CrispyTestCase):
         self.assertTrue(isinstance(layout[0][0], Div))
         self.assertTrue(isinstance(layout[0][0][0], Div))
         self.assertTrue(isinstance(layout[0][1], Div))
-        self.assertTrue(isinstance(layout[0][1][0], string_types))
-        self.assertTrue(isinstance(layout[0][2], string_types))
+        self.assertTrue(isinstance(layout[0][1][0], six.string_types))
+        self.assertTrue(isinstance(layout[0][2], six.string_types))
 
     def test__getattr__append_layout_object(self):
         layout = Layout(
@@ -494,8 +494,8 @@ class TestDynamicLayouts(CrispyTestCase):
         )
         layout.append('password1')
         self.assertTrue(isinstance(layout[0], Div))
-        self.assertTrue(isinstance(layout[0][0], string_types))
-        self.assertTrue(isinstance(layout[1], string_types))
+        self.assertTrue(isinstance(layout[0][0], six.string_types))
+        self.assertTrue(isinstance(layout[1], six.string_types))
 
     def test__setitem__layout_object(self):
         layout = Layout(
