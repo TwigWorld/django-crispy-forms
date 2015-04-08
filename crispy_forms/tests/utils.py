@@ -1,4 +1,11 @@
-__all__ = ('override_settings',)
+__all__ = ('override_settings', 'setup')
+
+
+try:
+    from django import setup
+except ImportError:
+    def setup():
+        pass
 
 
 try:

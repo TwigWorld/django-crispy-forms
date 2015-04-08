@@ -1,3 +1,4 @@
+import django
 from django import forms
 from django.db import models
 
@@ -89,6 +90,11 @@ class TestForm3(forms.ModelForm):
 class TestForm4(forms.ModelForm):
     class Meta:
         model = CrispyTestModel
+        # Starting from Django 1.8, forms need to explicitly specify '__all__',
+        # But this shortcut is only available in Django 1.6+.
+        # Should be simplified when 1.4 support is dropped.
+        if django.VERSION >= (1, 6):
+            fields = '__all__'
 
 
 class TestForm5(forms.Form):

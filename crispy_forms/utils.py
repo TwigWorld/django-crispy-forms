@@ -1,5 +1,4 @@
 from __future__ import with_statement
-import inspect
 import logging
 import sys
 
@@ -23,6 +22,19 @@ TEMPLATE_PACK = getattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap')
 @lru_cache(maxsize=None)
 def default_field_template(template_pack=TEMPLATE_PACK):
     return get_template("%s/field.html" % template_pack)
+
+
+def set_hidden(widget):
+    """Set a widget to be hidden.
+
+    Starting from Django 1.7, the hidden attribute is inferred from the input
+    type, instead of being a standalone attribute.
+
+    Should be removed when Django 1.4 support is dropped.
+    """
+    widget.input_type = 'hidden'
+    if not widget.is_hidden:
+        widget.is_hidden = True
 
 
 def render_field(
@@ -87,13 +99,13 @@ def render_field(
                 for index, (widget, attr) in enumerate(zip(widgets, list_attrs)):
                     if hasattr(field_instance.widget, 'widgets'):
                         if 'type' in attr and attr['type'] == "hidden":
-                            field_instance.widget.widgets[index].is_hidden = True
+                            set_hidden(field_instance.widget.widgets[index])
                             field_instance.widget.widgets[index] = field_instance.hidden_widget()
 
                         field_instance.widget.widgets[index].attrs.update(attr)
                     else:
                         if 'type' in attr and attr['type'] == "hidden":
-                            field_instance.widget.is_hidden = True
+                            set_hidden(field_instance.widget)
                             field_instance.widget = field_instance.hidden_widget()
 
                         field_instance.widget.attrs.update(attr)

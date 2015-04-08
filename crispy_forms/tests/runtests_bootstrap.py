@@ -1,20 +1,24 @@
 #!/usr/bin/env python
 
-import os, sys
+import os
+import sys
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'test_settings'
-parent = os.path.dirname(os.path.dirname(os.path.dirname(
-            os.path.abspath(__file__))))
+parent = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 
 sys.path.insert(0, parent)
 
-from django.test.simple import DjangoTestSuiteRunner
 from django.conf import settings
+from django.test.simple import DjangoTestSuiteRunner
 
 settings.CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 
 def runtests():
+    from crispy_forms.tests.utils import setup
+    setup()
     return DjangoTestSuiteRunner(failfast=False).run_tests([
         'crispy_forms.TestBasicFunctionalityTags',
         'crispy_forms.TestFormHelper',

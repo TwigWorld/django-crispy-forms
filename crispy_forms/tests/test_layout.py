@@ -278,7 +278,10 @@ class TestFormLayout(CrispyTestCase):
                       'value="1000" id="id_form-MAX_NUM_FORMS" />')
         self.assertInHTML(needle, html, count=1)
 
-        self.assertEqual(html.count("hidden"), 4)
+        count = 4
+        if django_version >= (1, 7):
+            count += 1  # Django 1.7 introduces MIN_NUM_FORMS.
+        self.assertEqual(html.count("hidden"), count)
 
         # Check form structure
         self.assertEqual(html.count('<form'), 1)

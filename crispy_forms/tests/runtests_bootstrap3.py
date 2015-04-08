@@ -15,6 +15,8 @@ settings.CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
 def runtests():
+    from crispy_forms.tests.utils import setup
+    setup()
     return DjangoTestSuiteRunner(failfast=False).run_tests([
         'crispy_forms.TestBasicFunctionalityTags',
         'crispy_forms.TestFormHelper',
