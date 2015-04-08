@@ -2,6 +2,11 @@
 Contributors
 ============
 
+django-crispy-forms-ng Project Lead
+===================================
+
+* Tzu-ping Chung <uranusjr@gmail.com>
+
 django-crispy-forms Project Lead
 ================================
 
