@@ -5,6 +5,12 @@ if django.VERSION >= (1, 5):
 else:
     from django.conf.urls.defaults import patterns, url
 
-urlpatterns = patterns('',
-    url(r'^simple/action/$', 'simpleAction', name = 'simpleAction'),
+
+def simpleAction(request):
+    pass
+
+
+urlpatterns = patterns(
+    '',
+    url(r'^simple/action/$', simpleAction, name='simpleAction'),
 )

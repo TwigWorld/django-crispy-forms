@@ -1,5 +1,5 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import re
 
 import django
 from django import forms
@@ -8,9 +8,7 @@ from django.core.urlresolvers import reverse
 from django.forms.models import formset_factory, modelformset_factory
 from django.middleware.csrf import _get_new_csrf_key
 from django.shortcuts import render_to_response
-from django.template import (
-    Context, RequestContext, loader
-)
+from django.template import Context, RequestContext
 from django.test import RequestFactory
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
@@ -29,6 +27,8 @@ from crispy_forms.layout import (
 )
 from crispy_forms.utils import render_crispy_form
 
+from crispy_forms.tests.utils import get_template_from_string
+
 
 class TestFormLayout(CrispyTestCase):
     urls = 'crispy_forms.tests.urls'
@@ -42,7 +42,7 @@ class TestFormLayout(CrispyTestCase):
             )
         )
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
@@ -80,7 +80,7 @@ class TestFormLayout(CrispyTestCase):
             'first_name',
         )
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
@@ -96,13 +96,13 @@ class TestFormLayout(CrispyTestCase):
             )
         )
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
         c = Context({'form': TestForm(), 'form_helper': form_helper})
         settings.CRISPY_FAIL_SILENTLY = False
-        self.assertRaises(Exception, lambda:template.render(c))
+        self.assertRaises(Exception, lambda: template.render(c))
         del settings.CRISPY_FAIL_SILENTLY
 
     def test_double_rendered_field(self):
@@ -114,13 +114,13 @@ class TestFormLayout(CrispyTestCase):
             )
         )
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
         c = Context({'form': TestForm(), 'form_helper': form_helper})
         settings.CRISPY_FAIL_SILENTLY = False
-        self.assertRaises(Exception, lambda:template.render(c))
+        self.assertRaises(Exception, lambda: template.render(c))
         del settings.CRISPY_FAIL_SILENTLY
 
     def test_context_pollution(self):
@@ -130,7 +130,7 @@ class TestFormLayout(CrispyTestCase):
         form = ExampleForm()
         form2 = TestForm()
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {{ form.as_ul }}
             {% crispy form2 %}
@@ -149,10 +149,10 @@ class TestFormLayout(CrispyTestCase):
                 Fieldset(
                     u'Company Data',
                     u'is_company',
-                    css_id = "fieldset_company_data",
-                    css_class = "fieldsets",
-                    title = "fieldset_title",
-                    test_fieldset = "123"
+                    css_id="fieldset_company_data",
+                    css_class="fieldsets",
+                    title="fieldset_title",
+                    test_fieldset="123"
                 ),
                 Fieldset(
                     u'User Data',
@@ -160,8 +160,8 @@ class TestFormLayout(CrispyTestCase):
                     Row(
                         u'password1',
                         u'password2',
-                        css_id = "row_passwords",
-                        css_class = "rows",
+                        css_id="row_passwords",
+                        css_class="rows",
                     ),
                     HTML('<a href="#" id="testLink">test link</a>'),
                     HTML(u"""
@@ -173,7 +173,7 @@ class TestFormLayout(CrispyTestCase):
             )
         )
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
@@ -200,7 +200,7 @@ class TestFormLayout(CrispyTestCase):
         self.assertTrue('testLink' in html)
 
     def test_change_layout_dynamically_delete_field(self):
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
@@ -215,12 +215,12 @@ class TestFormLayout(CrispyTestCase):
                     'email',
                     'password1',
                     'password2',
-                    css_id = "multifield_info",
+                    css_id="multifield_info",
                 ),
                 Column(
                     'first_name',
                     'last_name',
-                    css_id = "column_name",
+                    css_id="column_name",
                 )
             )
         )
@@ -243,13 +243,15 @@ class TestFormLayout(CrispyTestCase):
         helper.form_method = 'POST'
         helper.form_action = 'simpleAction'
         helper.layout = Layout(
-            Fieldset("Item {{ forloop.counter }}",
+            Fieldset(
+                "Item {{ forloop.counter }}",
                 'is_company',
                 'email',
             ),
             HTML("{% if forloop.first %}Note for first form only{% endif %}"),
             Row('password1', 'password2'),
-            Fieldset("",
+            Fieldset(
+                "",
                 'first_name',
                 'last_name'
             )
@@ -336,7 +338,7 @@ class TestFormLayout(CrispyTestCase):
         self.assertEqual(html.count('password'), 0)
 
     def test_i18n(self):
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form.helper %}
         """)
@@ -406,17 +408,18 @@ class TestUniformFormLayout(TestFormLayout):
         form_helper.add_layout(
             Layout(
                 Layout(
-                    MultiField("Some company data",
+                    MultiField(
+                        "Some company data",
                         'is_company',
                         'email',
-                        css_id = "multifield_info",
+                        css_id="multifield_info",
                     ),
                 ),
                 Column(
                     'first_name',
                     # 'last_name', Missing a field on purpose
-                    css_id = "column_name",
-                    css_class = "columns",
+                    css_id="column_name",
+                    css_class="columns",
                 ),
                 ButtonHolder(
                     Submit('Save', 'Save', css_class='button white'),
@@ -430,7 +433,7 @@ class TestUniformFormLayout(TestFormLayout):
             )
         )
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
                 {% load crispy_forms_tags %}
                 {% crispy form form_helper %}
             """)
@@ -453,18 +456,19 @@ class TestUniformFormLayout(TestFormLayout):
         form_helper = FormHelper()
         form_helper.add_layout(
             Layout(
-                MultiField("Some company data",
+                MultiField(
+                    "Some company data",
                     'is_company',
                     'email',
-                    css_id = "multifield_info",
-                    title = "multifield_title",
-                    multifield_test = "123"
+                    css_id="multifield_info",
+                    title="multifield_title",
+                    multifield_test="123"
                 ),
                 Column(
                     'first_name',
                     'last_name',
-                    css_id = "column_name",
-                    css_class = "columns",
+                    css_id="column_name",
+                    css_class="columns",
                 ),
                 ButtonHolder(
                     Submit('Save the world', '{{ value_var }}', css_class='button white', data_id='test', data_name='test'),
@@ -480,7 +484,7 @@ class TestUniformFormLayout(TestFormLayout):
             )
         )
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
                 {% load crispy_forms_tags %}
                 {% crispy form form_helper %}
             """)

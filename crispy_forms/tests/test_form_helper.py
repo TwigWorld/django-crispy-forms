@@ -7,9 +7,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.forms.models import formset_factory
 from django.middleware.csrf import _get_new_csrf_key
-from django.template import (
-    loader, TemplateSyntaxError, Context
-)
+from django.template import TemplateSyntaxError, Context
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
@@ -26,6 +24,8 @@ from crispy_forms.layout import (
 from crispy_forms.utils import render_crispy_form
 from crispy_forms.templatetags.crispy_forms_tags import CrispyFormNode
 
+from crispy_forms.tests.utils import get_template_from_string
+
 
 class TestFormHelper(CrispyTestCase):
     urls = 'crispy_forms.tests.urls'
@@ -37,7 +37,7 @@ class TestFormHelper(CrispyTestCase):
         form_helper.add_input(Hidden('my-hidden', 'Hidden'))
         form_helper.add_input(Button('my-button', 'Button'))
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
@@ -76,13 +76,13 @@ class TestFormHelper(CrispyTestCase):
         form_helper.form_action = 'simpleAction'
         form_helper.form_error_title = 'ERRORS'
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy testForm form_helper %}
         """)
 
         # now we render it, with errors
-        form = TestForm({'password1': 'wargame','password2': 'god'})
+        form = TestForm({'password1': 'wargame', 'password2': 'god'})
         form.is_valid()
         c = Context({'testForm': form, 'form_helper': form_helper})
         html = template.render(c)
@@ -115,7 +115,7 @@ class TestFormHelper(CrispyTestCase):
         form.helper.form_show_errors = True
         form.is_valid()
 
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy testForm %}
         """)
@@ -202,7 +202,7 @@ class TestFormHelper(CrispyTestCase):
         self.assertEqual(helper['form_id'], 'test-form')
 
     def test_without_helper(self):
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form %}
         """)
@@ -221,7 +221,7 @@ class TestFormHelper(CrispyTestCase):
         override_pack = current_pack == 'uni_form' and 'bootstrap' or 'uni_form'
 
         # {% crispy form 'template_pack_name' %}
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {%% load crispy_forms_tags %%}
             {%% crispy form "%s" %%}
         """ % override_pack)
@@ -238,7 +238,7 @@ class TestFormHelper(CrispyTestCase):
         override_pack = current_pack == 'uni_form' and 'bootstrap' or 'uni_form'
 
         # {% crispy form helper 'template_pack_name' %}
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {%% load crispy_forms_tags %%}
             {%% crispy form form_helper "%s" %%}
         """ % override_pack)
@@ -252,7 +252,7 @@ class TestFormHelper(CrispyTestCase):
 
     def test_template_pack_override_wrong(self):
         try:
-            loader.get_template_from_string(u"""
+            get_template_from_string(u"""
                 {% load crispy_forms_tags %}
                 {% crispy form 'foo' %}
             """)
@@ -260,7 +260,7 @@ class TestFormHelper(CrispyTestCase):
             pass
 
     def test_invalid_helper(self):
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
@@ -269,13 +269,13 @@ class TestFormHelper(CrispyTestCase):
         settings.CRISPY_FAIL_SILENTLY = False
         # Django >= 1.4 is not wrapping exceptions in TEMPLATE_DEBUG mode
         if settings.TEMPLATE_DEBUG and django.VERSION < (1, 4):
-            self.assertRaises(TemplateSyntaxError, lambda:template.render(c))
+            self.assertRaises(TemplateSyntaxError, lambda: template.render(c))
         else:
-            self.assertRaises(TypeError, lambda:template.render(c))
+            self.assertRaises(TypeError, lambda: template.render(c))
         del settings.CRISPY_FAIL_SILENTLY
 
     def test_formset_with_helper_without_layout(self):
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy testFormSet formset_helper %}
         """)
@@ -286,7 +286,7 @@ class TestFormHelper(CrispyTestCase):
         form_helper.form_method = 'POST'
         form_helper.form_action = 'simpleAction'
 
-        TestFormSet = formset_factory(TestForm, extra = 3)
+        TestFormSet = formset_factory(TestForm, extra=3)
         testFormSet = TestFormSet()
 
         c = Context({'testFormSet': testFormSet, 'formset_helper': form_helper, 'csrf_token': _get_new_csrf_key()})
@@ -309,7 +309,7 @@ class TestFormHelper(CrispyTestCase):
 
     def test_CSRF_token_POST_form(self):
         form_helper = FormHelper()
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
@@ -325,7 +325,7 @@ class TestFormHelper(CrispyTestCase):
     def test_CSRF_token_GET_form(self):
         form_helper = FormHelper()
         form_helper.form_method = 'GET'
-        template = loader.get_template_from_string(u"""
+        template = get_template_from_string(u"""
             {% load crispy_forms_tags %}
             {% crispy form form_helper %}
         """)
@@ -457,12 +457,12 @@ class TestUniformFormHelper(TestFormHelper):
 class TestBootstrapFormHelper(TestFormHelper):
     def test_form_show_errors(self):
         form = TestForm({
-                'email': 'invalidemail',
-                'first_name': 'first_name_too_long',
-                'last_name': 'last_name_too_long',
-                'password1': 'yes',
-                'password2': 'yes',
-                })
+            'email': 'invalidemail',
+            'first_name': 'first_name_too_long',
+            'last_name': 'last_name_too_long',
+            'password1': 'yes',
+            'password2': 'yes',
+        })
         form.helper = FormHelper()
         form.helper.layout = Layout(
             AppendedText('email', 'whatever'),
@@ -576,14 +576,26 @@ class TestBootstrap3FormHelper(TestFormHelper):
         form.helper.field_class = 'col-lg-8'
         html = render_crispy_form(form)
 
-        self.assertTrue('<div class="form-group"> <div class="controls col-lg-offset-2 col-lg-8"> <div id="div_id_is_company" class="checkbox"> <label for="id_is_company" class=""> <input class="checkboxinput checkbox" id="id_is_company" name="is_company" type="checkbox" />')
+        self.assertTrue(
+            '<div class="form-group"> '
+            '<div class="controls col-lg-offset-2 col-lg-8"> '
+            '<div id="div_id_is_company" class="checkbox"> '
+            '<label for="id_is_company" class=""> '
+            '<input class="checkboxinput checkbox" id="id_is_company" '
+            'name="is_company" type="checkbox" />')
         self.assertEqual(html.count('col-lg-8'), 7)
 
         form.helper.label_class = 'col-sm-3'
         form.helper.field_class = 'col-sm-8'
         html = render_crispy_form(form)
 
-        self.assertTrue('<div class="form-group"> <div class="controls col-sm-offset-3 col-sm-8"> <div id="div_id_is_company" class="checkbox"> <label for="id_is_company" class=""> <input class="checkboxinput checkbox" id="id_is_company" name="is_company" type="checkbox" />')
+        self.assertTrue(
+            '<div class="form-group"> '
+            '<div class="controls col-sm-offset-3 col-sm-8"> '
+            '<div id="div_id_is_company" class="checkbox"> '
+            '<label for="id_is_company" class=""> '
+            '<input class="checkboxinput checkbox" id="id_is_company" '
+            'name="is_company" type="checkbox" />')
         self.assertEqual(html.count('col-sm-8'), 7)
 
     def test_template_pack(self):
