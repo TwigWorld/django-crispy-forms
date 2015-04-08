@@ -9,8 +9,7 @@ env:
   - DJANGO=1.5.1
 install:
   - pip install Django==$DJANGO
-  - pip install "file://`pwd`#egg=django-crispy-forms[tests]"
-  - pip install -e . --use-mirrors
+  - pip install -e .
 script:
   - make test
 notifications:
