@@ -268,7 +268,7 @@ class TestFormHelper(CrispyTestCase):
 
         settings.CRISPY_FAIL_SILENTLY = False
         # Django >= 1.4 is not wrapping exceptions in TEMPLATE_DEBUG mode
-        if settings.TEMPLATE_DEBUG and django.get_version() < '1.4':
+        if settings.TEMPLATE_DEBUG and django.VERSION < (1, 4):
             self.assertRaises(TemplateSyntaxError, lambda:template.render(c))
         else:
             self.assertRaises(TypeError, lambda:template.render(c))
@@ -361,7 +361,7 @@ class TestFormHelper(CrispyTestCase):
         self.assertEqual(html.count('<input'), 3)
         self.assertEqual(html.count('hidden'), 2)
 
-        if django.get_version() < '1.5':
+        if django.VERSION < (1, 5):
             self.assertEqual(html.count('type="hidden" name="password1"'), 1)
             self.assertEqual(html.count('type="hidden" name="password2"'), 1)
         else:
