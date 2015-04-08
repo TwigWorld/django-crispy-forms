@@ -361,12 +361,14 @@ class TestFormHelper(CrispyTestCase):
         self.assertEqual(html.count('<input'), 3)
         self.assertEqual(html.count('hidden'), 2)
 
-        if django.VERSION < (1, 5):
-            self.assertEqual(html.count('type="hidden" name="password1"'), 1)
-            self.assertEqual(html.count('type="hidden" name="password2"'), 1)
-        else:
-            self.assertEqual(html.count('name="password1" type="hidden"'), 1)
-            self.assertEqual(html.count('name="password2" type="hidden"'), 1)
+        self.assertInHTML(
+            '<input type="hidden" name="password1" id="id_password1" />',
+            html, count=1,
+        )
+        self.assertInHTML(
+            '<input type="hidden" name="password2" id="id_password2" />',
+            html, count=1,
+        )
 
     def test_render_required_fields(self):
         test_form = TestForm()

@@ -33,3 +33,28 @@ class CrispyTestCase(TestCase):
     @property
     def current_template_pack(self):
         return getattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap')
+
+    if not hasattr(TestCase, 'assertInHTML'):
+        def assertInHTML(self, needle, haystack, count=None, msg_prefix=''):
+            """Backport from Django 1.6.
+            """
+            from django.test.testcases import assert_and_parse_html
+
+            needle = assert_and_parse_html(
+                self, needle, None, 'First argument is not valid HTML:',
+            )
+            haystack = assert_and_parse_html(
+                self, haystack, None, 'Second argument is not valid HTML:',
+            )
+            real_count = haystack.count(needle)
+            if count is not None:
+                self.assertEqual(
+                    real_count, count,
+                    msg_prefix + "Found %d instances of '%s' in response"
+                    " (expected %d)" % (real_count, needle, count),
+                )
+            else:
+                self.assertTrue(
+                    real_count != 0,
+                    msg_prefix + "Couldn't find '%s' in response" % needle,
+                )

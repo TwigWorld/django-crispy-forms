@@ -261,31 +261,23 @@ class TestFormLayout(CrispyTestCase):
 
         # Check formset fields
         django_version = django.VERSION
-        if django_version < (1, 5):
-            self.assertEqual(html.count(
-                'name="form-TOTAL_FORMS" value="3" id="id_form-TOTAL_FORMS"'
-            ), 1)
-            self.assertEqual(html.count(
-                'type="hidden" name="form-INITIAL_FORMS" value="0" id="id_form-INITIAL_FORMS"'
-            ), 1)
-            if (django_version >= (1, 4) and django_version < (1, 4, 4)) or django_version < (1, 3, 6):
-                self.assertEqual(html.count(
-                    'type="hidden" name="form-MAX_NUM_FORMS" id="id_form-MAX_NUM_FORMS"'
-                ), 1)
-            else:
-                self.assertEqual(html.count(
-                    'type="hidden" name="form-MAX_NUM_FORMS" value="1000" id="id_form-MAX_NUM_FORMS"'
-                ), 1)
+        self.assertInHTML(
+            '<input type="hidden" name="form-TOTAL_FORMS" value="3" '
+            'id="id_form-TOTAL_FORMS" />', html, count=1,
+        )
+        self.assertInHTML(
+            '<input id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" '
+            'type="hidden" value="0" />', html, count=1,
+        )
+        if ((1, 4) <= django_version < (1, 4, 4)
+                or django_version < (1, 3, 6)):
+            needle = ('<input type="hidden" name="form-MAX_NUM_FORMS" '
+                      'id="id_form-MAX_NUM_FORMS" />')
         else:
-            self.assertEqual(html.count(
-                'id="id_form-TOTAL_FORMS" name="form-TOTAL_FORMS" type="hidden" value="3"'
-            ), 1)
-            self.assertEqual(html.count(
-                'id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" type="hidden" value="0"'
-            ), 1)
-            self.assertEqual(html.count(
-                'id="id_form-MAX_NUM_FORMS" name="form-MAX_NUM_FORMS" type="hidden" value="1000"'
-            ), 1)
+            needle = ('<input type="hidden" name="form-MAX_NUM_FORMS" '
+                      'value="1000" id="id_form-MAX_NUM_FORMS" />')
+        self.assertInHTML(needle, html, count=1)
+
         self.assertEqual(html.count("hidden"), 4)
 
         # Check form structure
@@ -320,31 +312,19 @@ class TestFormLayout(CrispyTestCase):
         self.assertEqual(html.count("id_form-2-id"), 1)
 
         django_version = django.VERSION
-        if django_version < (1, 5):
-            self.assertEqual(html.count(
-                'type="hidden" name="form-TOTAL_FORMS" value="3" id="id_form-TOTAL_FORMS"'
-            ), 1)
-            self.assertEqual(html.count(
-                'type="hidden" name="form-INITIAL_FORMS" value="0" id="id_form-INITIAL_FORMS"'
-            ), 1)
-            if (django_version >= (1, 4) and django_version < (1, 4, 4)) or django_version < (1, 3, 6):
-                self.assertEqual(html.count(
-                    'type="hidden" name="form-MAX_NUM_FORMS" id="id_form-MAX_NUM_FORMS"'
-                ), 1)
-            else:
-                self.assertEqual(html.count(
-                    'type="hidden" name="form-MAX_NUM_FORMS" value="1000" id="id_form-MAX_NUM_FORMS"'
-                ), 1)
+        self.assertInHTML(
+            '<input type="hidden" name="form-TOTAL_FORMS" value="3" id="id_form-TOTAL_FORMS" />',
+            html, count=1,
+        )
+        self.assertInHTML(
+            '<input type="hidden" name="form-INITIAL_FORMS" value="0" id="id_form-INITIAL_FORMS" />',
+            html, count=1,
+        )
+        if (django_version >= (1, 4) and django_version < (1, 4, 4)) or django_version < (1, 3, 6):
+            needle = '<input type="hidden" name="form-MAX_NUM_FORMS" id="id_form-MAX_NUM_FORMS" />'
         else:
-            self.assertEqual(html.count(
-                'id="id_form-TOTAL_FORMS" name="form-TOTAL_FORMS" type="hidden" value="3"'
-            ), 1)
-            self.assertEqual(html.count(
-                'id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" type="hidden" value="0"'
-            ), 1)
-            self.assertEqual(html.count(
-                'id="id_form-MAX_NUM_FORMS" name="form-MAX_NUM_FORMS" type="hidden" value="1000"'
-            ), 1)
+            needle = '<input id="id_form-MAX_NUM_FORMS" name="form-MAX_NUM_FORMS" type="hidden" value="1000" />'
+        self.assertInHTML(needle, html, count=1)
 
         self.assertEqual(html.count('name="form-0-email"'), 1)
         self.assertEqual(html.count('name="form-1-email"'), 1)
