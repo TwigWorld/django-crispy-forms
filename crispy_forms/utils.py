@@ -6,31 +6,36 @@ from django.conf import settings
 from django.forms.forms import BoundField
 from django.template import Context
 from django.template.loader import get_template
+from django.utils import six
 from django.utils.html import conditional_escape
 
 from .base import KeepContext
-from .compatibility import text_type, PY2, memoize
+from .compatibility import lru_cache
 
 # Global field template, default template used for rendering a field.
 
 TEMPLATE_PACK = getattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap')
 
-# By memoizeing we avoid loading the template every time render_field
-# is called without a template
+
+# By caching we avoid loading the template every time render_field is called
+# without a template.
+@lru_cache(maxsize=None)
 def default_field_template(template_pack=TEMPLATE_PACK):
     return get_template("%s/field.html" % template_pack)
-default_field_template = memoize(default_field_template, {}, 1)
+
 
 def set_hidden(widget):
-    '''
-    set widget to hidden
+    """Set a widget to be hidden.
 
-    different starting in Django 1.7, when is_hidden ceases to be a
-    true attribute and is determined by the input_type attribute
-    '''
+    Starting from Django 1.7, the hidden attribute is inferred from the input
+    type, instead of being a standalone attribute.
+
+    Should be removed when Django 1.4 support is dropped.
+    """
     widget.input_type = 'hidden'
     if not widget.is_hidden:
         widget.is_hidden = True
+
 
 def render_field(
     field, form, form_style, context, template=None, labelclass=None,
@@ -67,15 +72,15 @@ def render_field(
             )
         else:
             # In Python 2 form field names cannot contain unicode characters without ASCII mapping
-            if PY2:
+            if not six.PY3:
                 # This allows fields to be unicode strings, always they don't use non ASCII
                 try:
-                    if isinstance(field, text_type):
+                    if isinstance(field, six.text_type):
                         field = field.encode('ascii').decode()
                     # If `field` is not unicode then we turn it into a unicode string, otherwise doing
                     # str(field) would give no error and the field would not be resolved, causing confusion
                     else:
-                        field = text_type(field)
+                        field = six.text_type(field)
 
                 except (UnicodeEncodeError, UnicodeDecodeError):
                     raise Exception("Field '%s' is using forbidden unicode characters" % field)

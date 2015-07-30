@@ -17,7 +17,7 @@ If you want to install development version (unstable), you can do so doing::
 
 Or, if you'd like to install the development version as a git repository (so
 you can ``git pull`` updates, use the ``-e`` flag with ``pip install``, like
-so:: 
+so::
 
     pip install -e git+git://github.com/maraujop/django-crispy-forms.git@dev#egg=django-crispy-forms
 
@@ -30,7 +30,7 @@ Add ``crispy_forms`` to your ``INSTALLED_APPS`` in settings.py::
 
 In production environments, always activate Django template cache loader. This is available since Django 1.2 and what it does is basically load templates once, then cache the result for every subsequent render. This leads to a significant performance improvement. See how to set it up using fabulous `Django docs page`_.
 
-.. _`Django docs page`: https://docs.djangoproject.com/en/1.5/ref/templates/api/#django.template.loaders.cached.Loader
+.. _`Django docs page`: https://docs.djangoproject.com/en/stable/ref/templates/api/#django.template.loaders.cached.Loader
 
 Template packs
 ~~~~~~~~~~~~~~

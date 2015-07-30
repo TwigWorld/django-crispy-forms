@@ -3,13 +3,9 @@ import re
 
 from django import template
 from django.conf import settings
-try:  # Django < 1.4
-    from django.utils.encoding import force_unicode as force_text
-except ImportError:
-    from django.utils.encoding import force_text
+from django.utils import six
+from django.utils.encoding import force_text
 from django.utils.functional import allow_lazy
-
-from crispy_forms.compatibility import text_type
 
 register = template.Library()
 TEMPLATE_PACK = getattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap')
@@ -28,7 +24,7 @@ def selectively_remove_spaces_between_tags(value, template_pack, form_class):
         return re.sub(r'/><', r'/> <', force_text(html))
     return value
 selectively_remove_spaces_between_tags = allow_lazy(
-    selectively_remove_spaces_between_tags, text_type
+    selectively_remove_spaces_between_tags, six.text_type
 )
 
 

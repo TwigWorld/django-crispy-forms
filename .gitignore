@@ -1,5 +1,6 @@
 setuptools_git-0.3.4-py2.6.egg
-#buildout's specific
+
+# buildout's specific
 .installed.cfg
 eggs/*
 bin/*
@@ -9,17 +10,20 @@ develop-eggs/*
 parts/*
 downloads/*
 
-#egg's specific
+# egg's specific
 *.egg-info
 
-#defaults
+# defaults
 *.pyc
 *.pyo
 __pycache__
 
-#temp file
+ #temp file
 tempfile
 *.swp
+
+# test
+.tox
 
 # coverage 
 .coverage

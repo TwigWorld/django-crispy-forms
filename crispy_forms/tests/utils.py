@@ -1,4 +1,42 @@
-__all__ = ('override_settings',)
+__all__ = ('override_settings', 'setup')
+
+
+try:
+    from django import setup
+except ImportError:
+    def setup():
+        pass
+
+
+try:
+    from django.test.runner import DiscoverRunner
+except ImportError:
+    # Django 1.5 or earlier. Fallback to a patched version of the old runner.
+    # Should be removed when dropping 1.4 and 1.5 support.
+    from django.test.simple import DjangoTestSuiteRunner
+
+    class DiscoverRunner(DjangoTestSuiteRunner):
+        def run_tests(self, tests, *args, **kwargs):
+            tests = [
+                test.replace('crispy_forms.tests.', 'crispy_forms.')
+                for test in tests
+            ]
+            return super(DiscoverRunner, self).run_tests(tests, *args, **kwargs)
+
+
+try:
+    from django.template import engines
+
+    def get_template_from_string(s):
+        return engines['django'].from_string(s)
+
+except ImportError:
+    # Old template loading private API in Django < 1.8.
+    # Remove this when dropping 1.4 and 1.7 support.
+    from django.template import loader
+
+    def get_template_from_string(s):
+        return loader.get_template_from_string(s)
 
 
 try:

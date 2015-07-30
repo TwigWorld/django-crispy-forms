@@ -3,9 +3,9 @@ import warnings
 from django.conf import settings
 from django.template import Context, Template
 from django.template.loader import render_to_string
+from django.utils import six
 from django.utils.html import conditional_escape
 
-from crispy_forms.compatibility import string_types, text_type
 from crispy_forms.utils import render_field, flatatt
 
 TEMPLATE_PACK = getattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap')
@@ -45,7 +45,7 @@ class LayoutObject(object):
                [[0,3], 'field_name2']
             ]
         """
-        return self.get_layout_objects(string_types, greedy=True)
+        return self.get_layout_objects(six.string_types, greedy=True)
 
     def get_layout_objects(self, *LayoutClasses, **kwargs):
         """
@@ -75,7 +75,7 @@ class LayoutObject(object):
 
         for i, layout_object in enumerate(self.fields):
             if isinstance(layout_object, LayoutClasses):
-                if len(LayoutClasses) == 1 and LayoutClasses[0] == string_types:
+                if len(LayoutClasses) == 1 and LayoutClasses[0] == six.string_types:
                     pointers.append([index + [i], layout_object])
                 else:
                     pointers.append([index + [i], layout_object.__class__.__name__.lower()])
@@ -194,7 +194,7 @@ class BaseInput(object):
         Renders an `<input />` if container is used as a Layout object.
         Input button value can be a variable in context.
         """
-        self.value = Template(text_type(self.value)).render(context)
+        self.value = Template(six.text_type(self.value)).render(context)
         template = self.template % template_pack
         return render_to_string(template, {'input': self}, context)
 
@@ -281,7 +281,7 @@ class Fieldset(LayoutObject):
 
         legend = ''
         if self.legend:
-            legend = u'%s' % Template(text_type(self.legend)).render(context)
+            legend = u'%s' % Template(six.text_type(self.legend)).render(context)
 
         template = self.template % template_pack
         return render_to_string(
@@ -395,7 +395,7 @@ class HTML(object):
         self.html = html
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
-        return Template(text_type(self.html)).render(context)
+        return Template(six.text_type(self.html)).render(context)
 
 
 class Field(LayoutObject):

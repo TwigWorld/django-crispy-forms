@@ -89,15 +89,12 @@ class TestForm3(forms.ModelForm):
 
 class TestForm4(forms.ModelForm):
     class Meta:
-        '''
-        before Django1.6, one cannot use __all__ shortcut for fields
-        without getting the following error:
-        django.core.exceptions.FieldError: Unknown field(s) (a, l, _) specified for CrispyTestModel
-        because obviously it casts the string to a set
-        '''
         model = CrispyTestModel
+        # Starting from Django 1.8, forms need to explicitly specify '__all__',
+        # But this shortcut is only available in Django 1.6+.
+        # Should be simplified when 1.4 support is dropped.
         if django.VERSION >= (1, 6):
-            fields = '__all__'  # eliminate RemovedInDjango18Warning
+            fields = '__all__'
 
 
 class TestForm5(forms.Form):

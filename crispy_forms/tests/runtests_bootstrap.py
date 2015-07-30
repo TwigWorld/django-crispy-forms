@@ -1,32 +1,32 @@
 #!/usr/bin/env python
 
-import os, sys
+import os
+import sys
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'test_settings'
 parent = os.path.dirname(os.path.dirname(os.path.dirname(
-            os.path.abspath(__file__))))
+    os.path.abspath(__file__)
+)))
 
 sys.path.insert(0, parent)
 
-import django
-from django.test.simple import DjangoTestSuiteRunner
 from django.conf import settings
 
 settings.CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 
 def runtests():
-    if hasattr(django, 'setup'):
-        django.setup()
-    return DjangoTestSuiteRunner(failfast=False).run_tests([
-        'crispy_forms.TestBasicFunctionalityTags',
-        'crispy_forms.TestFormHelper',
-        'crispy_forms.TestBootstrapFormHelper',
-        'crispy_forms.TestFormLayout',
-        'crispy_forms.TestBootstrapFormLayout',
-        'crispy_forms.TestLayoutObjects',
-        'crispy_forms.TestBootstrapLayoutObjects',
-        'crispy_forms.TestDynamicLayouts',
+    from crispy_forms.tests.utils import DiscoverRunner, setup
+    setup()
+    return DiscoverRunner(failfast=False).run_tests([
+        'crispy_forms.tests.TestBasicFunctionalityTags',
+        'crispy_forms.tests.TestFormHelper',
+        'crispy_forms.tests.TestBootstrapFormHelper',
+        'crispy_forms.tests.TestFormLayout',
+        'crispy_forms.tests.TestBootstrapFormLayout',
+        'crispy_forms.tests.TestLayoutObjects',
+        'crispy_forms.tests.TestBootstrapLayoutObjects',
+        'crispy_forms.tests.TestDynamicLayouts',
     ], verbosity=1, interactive=True)
 
 
