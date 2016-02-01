@@ -1,36 +1,38 @@
-from __future__ import with_statement
+from __future__ import unicode_literals
 import logging
 import sys
 
+import django
 from django.conf import settings
 from django.forms.forms import BoundField
 from django.template import Context
 from django.template.loader import get_template
-from django.utils import six
 from django.utils.html import conditional_escape
 
 from .base import KeepContext
-from .compatibility import lru_cache
-
-# Global field template, default template used for rendering a field.
-
-TEMPLATE_PACK = getattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap')
+from .compatibility import lru_cache, text_type, PY2, SimpleLazyObject
 
 
-# By caching we avoid loading the template every time render_field is called
-# without a template.
-@lru_cache(maxsize=None)
+def get_template_pack():
+    return getattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap')
+
+
+TEMPLATE_PACK = SimpleLazyObject(get_template_pack)
+
+
+# By caching we avoid loading the template every time render_field
+# is called without a template
+@lru_cache()
 def default_field_template(template_pack=TEMPLATE_PACK):
     return get_template("%s/field.html" % template_pack)
 
 
 def set_hidden(widget):
-    """Set a widget to be hidden.
+    """
+    set widget to hidden
 
-    Starting from Django 1.7, the hidden attribute is inferred from the input
-    type, instead of being a standalone attribute.
-
-    Should be removed when Django 1.4 support is dropped.
+    different starting in Django 1.7, when is_hidden ceases to be a
+    true attribute and is determined by the input_type attribute
     """
     widget.input_type = 'hidden'
     if not widget.is_hidden:
@@ -72,15 +74,15 @@ def render_field(
             )
         else:
             # In Python 2 form field names cannot contain unicode characters without ASCII mapping
-            if not six.PY3:
+            if PY2:
                 # This allows fields to be unicode strings, always they don't use non ASCII
                 try:
-                    if isinstance(field, six.text_type):
+                    if isinstance(field, text_type):
                         field = field.encode('ascii').decode()
                     # If `field` is not unicode then we turn it into a unicode string, otherwise doing
                     # str(field) would give no error and the field would not be resolved, causing confusion
                     else:
-                        field = six.text_type(field)
+                        field = text_type(field)
 
                 except (UnicodeEncodeError, UnicodeDecodeError):
                     raise Exception("Field '%s' is using forbidden unicode characters" % field)
@@ -153,6 +155,10 @@ def render_field(
             })
             if extra_context is not None:
                 context.update(extra_context)
+
+            if django.VERSION >= (1, 8):
+                context = context.flatten()
+
             html = template.render(context)
 
         return html
@@ -166,7 +172,7 @@ def flatatt(attrs):
     XML-style pairs.  It is assumed that the keys do not need to be XML-escaped.
     If the passed dictionary is empty, then return an empty string.
     """
-    return u''.join([u' %s="%s"' % (k.replace('_', '-'), conditional_escape(v)) for k, v in attrs.items()])
+    return ''.join([' %s="%s"' % (k.replace('_', '-'), conditional_escape(v)) for k, v in attrs.items()])
 
 
 def render_crispy_form(form, helper=None, context=None):
@@ -189,3 +195,42 @@ def render_crispy_form(form, helper=None, context=None):
     })
 
     return node.render(node_context)
+
+
+def list_intersection(list1, list2):
+    """
+    Take the not-in-place intersection of two lists, similar to sets but preserving order.
+    Does not check unicity of list1.
+    """
+    intersection = []
+    for item in list1:
+        if item in list2:
+            intersection.append(item)
+    return intersection
+
+
+def list_union(*lists):
+    """
+    Take the not-in-place union of two or more lists, similar to sets but preserving order.
+    """
+    union = []
+    for li in lists:
+        for item in li:
+            if item not in union:
+                union.append(item)
+    return union
+
+
+def list_difference(left, right):
+    """
+    Take the not-in-place difference of two lists (left - right), similar to sets but preserving order.
+    """
+    blocked = set(right)
+    difference = []
+    for item in left:
+        if item not in blocked:
+            blocked.add(item)
+            difference.append(item)
+    return difference
+
+

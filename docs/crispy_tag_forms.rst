@@ -177,7 +177,7 @@ Often we get asked: "How do you render two or more forms, with their respective 
 
 Then you will have to write a little of html code surrounding the forms::
 
-    <form action="{% url submit_survey %}" class="uniForm" method="post">
+    <form action="{% url 'submit_survey' %}" class="uniForm" method="post">
         {% crispy first_form %}
         {% crispy second_form %}
     </form>
@@ -222,7 +222,7 @@ For example this setting would generate ``<input class"textinput inputtext" ...`
 Render a form within Python code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Sometimes, it might be useful to render a form using crispy-forms within Python code, like a Django view, for that there is a nice helper ``render_crispy_form``. The prototype of the method is ``render_crispy_form(form, helper=None, context=None)``. You can use it like this.
+Sometimes, it might be useful to render a form using crispy-forms within Python code, like a Django view, for that there is a nice helper ``render_crispy_form``. The prototype of the method is ``render_crispy_form(form, helper=None, context=None)``. You can use it like this. Remember to pass your CSRF token to the helper method using the context dictionary if you want the rendered form to be able to submit.
 
 
 AJAX validation recipe
@@ -232,7 +232,9 @@ One easy way to validate a crispy-form through AJAX and re-render the resulting 
 
 Our server side code could be::
 
-    @jsonview
+    from crispy_forms.utils import render_crispy_form
+
+    @json_view
     def save_example_form(request):
         form = ExampleForm(request.POST or None)
         if form.is_valid():
@@ -240,10 +242,21 @@ Our server side code could be::
             form.save()
             return {'success': True}
 
-        form_html = render_crispy_form(form)
+        # RequestContext ensures CSRF token is placed in newly rendered form_html
+        request_context = RequestContext(request)
+        form_html = render_crispy_form(form, context=request_context)
         return {'success': False, 'form_html': form_html}
 
-I'm using a jsonview decorator from `django-jsonview`_. In our client side using jQuery would look like::
+I'm using a jsonview decorator from `django-jsonview`_.
+
+Note that in Django versions 1.8 and onwards, using ``RequestContext`` in this way will not work. Instead you can provide ``render_crispy_form`` with the necessary CSRF token with the following code
+
+    from django.core.context_processors import csrf
+    ctx = {}
+    ctx.update(csrf(request))
+    form_html = render_crispy_form(form, context=ctx)
+
+In our client side using jQuery would look like::
 
     var example_form = '#example-form';
 

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% if field.is_hidden %}
-	{{ field }}
+    {{ field }}
 {% else %}
 	<{% if tag %}{{ tag }}{% else %}div{% endif %} id="div_{{ field.auto_id }}" class="control-group{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if form_show_errors%}{% if field.errors %} error{% endif %}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
 		{% if field.label and not field|is_checkbox and form_show_labels %}
@@ -33,5 +33,5 @@
                 {% endif %}
             </div>
         {% endif %}
-	</{% if tag %}{{ tag }}{% else %}div{% endif %}>
+    </{% if tag %}{{ tag }}{% else %}div{% endif %}>
 {% endif %}

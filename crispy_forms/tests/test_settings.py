@@ -1,7 +1,5 @@
 import os
 
-from django.utils import six
-
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -16,6 +14,7 @@ INSTALLED_APPS = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:'
     }
 }
 
@@ -24,47 +23,33 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'crispy_forms.tests.urls'
 CRISPY_CLASS_CONVERTERS = {"textinput": "textinput textInput inputtext"}
 SECRET_KEY = 'secretkey'
 SITE_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-# http://djangosnippets.org/snippets/646/
-class InvalidVarException(object):
-    def __mod__(self, missing):
-        try:
-            missing_str = six.text_type(missing)
-        except:
-            missing_str = 'Failed to create string representation'
-        raise Exception('Unknown template variable %r %s' % (missing, missing_str))
-
-    def __contains__(self, search):
-        if search == '%s':
-            return True
-        return False
-
-
-# Vintage template settings.
 TEMPLATE_DEBUG = True
-TEMPLATE_STRING_IF_INVALID = InvalidVarException()
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'), )
 
-
-# Modern template settings.
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': TEMPLATE_DIRS,
         'APP_DIRS': True,
-        'DIRS': [],
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
+                # list if you haven't customized them:
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
             ],
-            'debug': True,
-            'string_if_invalid': InvalidVarException(),
+            'debug': TEMPLATE_DEBUG,
         },
     },
 ]

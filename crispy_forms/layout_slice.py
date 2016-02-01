@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.utils import six
-
+from crispy_forms.compatibility import integer_types, string_types
 from crispy_forms.exceptions import DynamicError
 from crispy_forms.layout import Fieldset, MultiField
 from crispy_forms.bootstrap import Container
@@ -12,8 +11,8 @@ class LayoutSlice(object):
 
     def __init__(self, layout, key):
         self.layout = layout
-        if isinstance(key, six.integer_types):
-            self.slice = slice(key, key+1, 1)
+        if isinstance(key, integer_types):
+            self.slice = slice(key, key + 1, 1)
         else:
             self.slice = key
 
@@ -24,7 +23,7 @@ class LayoutSlice(object):
         """
         if args:
             if isinstance(fields, list):
-                fields= tuple(fields)
+                fields = tuple(fields)
             else:
                 fields = (fields,)
 
@@ -138,7 +137,7 @@ class LayoutSlice(object):
                 # If update_attrs is applied to a string, we call to its wrapping layout object
                 if (
                     function.__name__ == 'update_attrs'
-                    and isinstance(layout_object, six.string_types)
+                    and isinstance(layout_object, string_types)
                 ):
                     function(previous_layout_object)
                 else:

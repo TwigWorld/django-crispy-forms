@@ -1,16 +1,35 @@
+import sys
+
+from django.utils.functional import SimpleLazyObject
+
 try:
-    # Try Django's lru_cache (available on Django 1.7+).
-    # Should be removed when 1.4 support is dropped.
+    basestring
+except:
+    basestring = str  # Python3
+
+PY2 = sys.version_info[0] == 2
+if not PY2:
+    text_type = str
+    binary_type = bytes
+    string_types = (str,)
+    integer_types = (int,)
+else:
+    text_type = unicode
+    binary_type = str
+    string_types = basestring
+    integer_types = (int, long)
+
+try:
+    # avoid RemovedInDjango19Warning by using lru_cache where available
     from django.utils.lru_cache import lru_cache
 except ImportError:
-    try:
-        # Try Python's version (available on Python 3.2+).
-        from lru_cache import lru_cache
-    except ImportError:
-        # We're on Python 2 with Django < 1.7. (Python 3.0 and 3.1 are not
-        # supported by Django.) Fallback to a naive implementation based on
-        # memoize.
-        from django.utils.functional import memoize
+    from django.utils.functional import memoize
 
-        def lru_cache(maxsize):
-            return lambda func: memoize(func, {}, 1)
+    def lru_cache():
+
+        def decorator(function, cache_dict=None):
+            if cache_dict is None:
+                cache_dict = {}
+            return memoize(function, cache_dict, 1)
+
+        return decorator

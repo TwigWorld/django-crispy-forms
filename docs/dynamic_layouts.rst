@@ -35,9 +35,9 @@ wrap
 One useful action you can apply on a slice is ``wrap``, which wraps every selected field using a layout object type and parameters passed. Let's see an example. If We had this layout::
 
     Layout(
-       'field_1',
-       'field_2',
-       'field_3'
+        'field_1',
+        'field_2',
+        'field_3'
     )
 
 We could do::
@@ -284,7 +284,7 @@ Supposing ``password1`` and ``password2`` fields are using widget ``PasswordInpu
 Manipulating a layout
 ~~~~~~~~~~~~~~~~~~~~~
 
-Besides selecting layout objects and applying actions to them, you can also manipulate layouts themselves and layout obejcts easily, like if they were lists. We won't do this from the helper, but the layout and layout objects themselves. Consider this a lower level API.
+Besides selecting layout objects and applying actions to them, you can also manipulate layouts themselves and layout objects easily, like if they were lists. We won't do this from the helper, but the layout and layout objects themselves. Consider this a lower level API.
 
 All layout objects that can wrap others, contain a inner attribute ``fields`` which is a list, not a dictionary as in Django forms. You can apply any list methods on them easily. Beware that a ``Layout`` behaves itself like other layout objects such as ``Div``, the only difference is that it is the root of the tree.
 
