@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% if field.is_hidden %}
     {{ field }}
 {% else %}
@@ -5,7 +7,7 @@
 
         {% if field.label %}
             <label for="{{ field.auto_id }}"  class="control-label {{ label_class }}{% if field.field.required %} requiredField{% endif %}">
-                {{ field.label|safe }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+                {{ field.label|safe }}{% if not field.field.required %}<span class="optional-field">{% trans "(Optional)" %}</span>{% endif %}
             </label>
         {% endif %}
 
